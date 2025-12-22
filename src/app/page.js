@@ -1,65 +1,230 @@
-import Image from "next/image";
+"use client";
+import { Suspense, useState, useEffect } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
+import dynamic from "next/dynamic";
+import Navbar from "@/components/ui/Navbar";
+import Hero from "@/components/ui/Hero";
+import Projects from "@/components/ui/Projects";
+import About from "@/components/ui/About";
+import Contact from "@/components/ui/Contact";
+import CanvasPlaceholder from "@/components/ui/CanvasPlaceholder";
+
+// Dynamic import for 3D scene - improves initial page load performance
+const Scene3D = dynamic(() => import("@/components/3d/Scene3D"), {
+  ssr: false,
+  loading: () => <CanvasPlaceholder />,
+});
 
 export default function Home() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      {/* Smooth scroll progress indicator */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-cyan-400 to-pink-500 origin-left z-[100]"
+        style={{ scaleX }}
+      />
+
+      <Navbar />
+
+      {/* 3D Background Canvas - Dynamically Loaded */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <Scene3D isMobile={isMobile} />
+      </div>
+
+      <div className="flex flex-col min-h-screen relative overflow-hidden">
+        {/* Liquid gradient orbs */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+          <motion.div
+            className="absolute w-[500px] h-[500px] rounded-full blur-[120px] opacity-20"
+            style={{
+              background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%)',
+            }}
+            animate={{
+              x: ['-10%', '110%'],
+              y: ['20%', '80%'],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              repeatType: 'reverse',
+              ease: 'easeInOut'
+            }}
+          />
+          <motion.div
+            className="absolute w-[600px] h-[600px] rounded-full blur-[120px] opacity-20"
+            style={{
+              background: 'radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%)',
+            }}
+            animate={{
+              x: ['110%', '-10%'],
+              y: ['80%', '20%'],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              repeatType: 'reverse',
+              ease: 'easeInOut'
+            }}
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Sections with smooth animations */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <Hero />
+        </motion.div>
+
+        {/* Glassmorphic divider */}
+        <div className="relative h-px my-16 mx-auto w-3/4 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+        >
+          <About />
+        </motion.div>
+
+        {/* Glassmorphic divider */}
+        <div className="relative h-px my-16 mx-auto w-3/4 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+        >
+          <Projects />
+        </motion.div>
+
+        {/* Glassmorphic divider */}
+        <div className="relative h-px my-16 mx-auto w-3/4 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+        >
+          <Contact />
+        </motion.div>
+
+        {/* Enhanced Footer with floating particles */}
+        <footer className="relative py-12 text-center text-sm mt-auto overflow-hidden">
+          {/* Glassmorphic background */}
+          <div className="absolute inset-0 glass-heavy backdrop-blur-xl border-t border-white/10" />
+
+          {/* Animated gradient border on top */}
+          <motion.div
+            className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-purple-500 via-cyan-400 to-pink-500"
+            animate={{
+              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: 'linear'
+            }}
+            style={{
+              backgroundSize: '200% 200%'
+            }}
+          />
+
+          {/* Floating particles */}
+          <div className="absolute inset-0 pointer-events-none">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-1 h-1 bg-white/20 rounded-full"
+                style={{
+                  left: `${(i * 12.5) + 5}%`,
+                  bottom: '20%',
+                }}
+                animate={{
+                  y: [-20, -60, -20],
+                  opacity: [0.2, 0.5, 0.2],
+                  scale: [1, 1.5, 1],
+                }}
+                transition={{
+                  duration: 3 + i * 0.2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: i * 0.3
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Footer content */}
+          <motion.div
+            className="relative z-10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <motion.p
+              className="text-base font-medium mb-2"
+              style={{ color: 'var(--foreground)', opacity: 0.7 }}
+              whileHover={{ opacity: 0.9, scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
+              © 2025 Shravana Kumar Patel
+            </motion.p>
+            <motion.p
+              className="text-sm italic"
+              style={{ color: 'var(--color-glow)' }}
+              animate={{
+                opacity: [0.5, 0.8, 0.5],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: 'easeInOut'
+              }}
+            >
+              Exploring the Antigravity of Code.
+            </motion.p>
+          </motion.div>
+
+          {/* Liquid shimmer effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
+            animate={{
+              x: ['-100%', '200%'],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: 'linear',
+              repeatDelay: 1
+            }}
+          />
+        </footer>
+      </div>
+    </>
   );
 }
