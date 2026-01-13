@@ -40,7 +40,7 @@ const MagneticWrapper = ({ children, className = "" }) => {
 
 // Animated Logo Component
 const AnimatedLogo = () => {
-    const letters = "S.K.P".split("");
+    const letters = "C.C.S".split("");
     return (
         <Link href="/" className="text-xl font-bold tracking-tighter flex items-center group pointer-events-auto">
             {letters.map((char, i) => (
@@ -196,6 +196,7 @@ export default function Navbar() {
         { name: "About", href: "#about" },
         { name: "Projects", href: "#projects" },
         { name: "Contact", href: "#contact" },
+        { name: "Services", href: "#services" },
     ];
 
     const scrollToSection = (e, href) => {

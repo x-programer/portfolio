@@ -28,7 +28,6 @@ function SceneContent() {
     return (
         <group ref={groupRef}>
             <StarField />
-            <Planet />
             <ShootingStars count={5} />
             <SpaceDust count={800} />
             <GeometricDebris count={15} />

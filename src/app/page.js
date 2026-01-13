@@ -4,6 +4,7 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/ui/Navbar";
 import Hero from "@/components/ui/Hero";
+import Services from "@/components/ui/Services";
 import Projects from "@/components/ui/Projects";
 import About from "@/components/ui/About";
 import Contact from "@/components/ui/Contact";
@@ -94,6 +95,18 @@ export default function Home() {
           transition={{ duration: 0.8 }}
         >
           <Hero />
+        </motion.div>
+
+        {/* Glassmorphic divider */}
+        <div className="relative h-px my-16 mx-auto w-3/4 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+        >
+          <Services />
         </motion.div>
 
         {/* Glassmorphic divider */}

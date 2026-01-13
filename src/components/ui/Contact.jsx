@@ -2,6 +2,9 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+// NEW: Import Firebase functions
+import { db } from "@/lib/firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 // NEW: Social Link component
 const SocialLink = ({ href, imgSrc, platform, delay }) => (
@@ -81,11 +84,35 @@ export default function Contact() {
     const [touched, setTouched] = useState({ name: false, email: false, message: false });
     const [isValid, setIsValid] = useState({ name: false, email: false, message: false });
 
-    // NEW: Validation Logic
+    // SECURITY: Input Sanitization Function
+    // This converts characters like <, >, & into harmless text symbols.
+    // e.g. "<script>" becomes "&lt;script&gt;" (which renders as text, not code)
+    const sanitize = (text) => {
+        if (!text) return "";
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    };
+
+    // SECURITY: Script Detection
+    // Returns true if the text contains suspicious patterns like "javascript:" or "<script"
+    const containsScript = (text) => {
+        const scriptPattern = /<script\b[^>]*>|javascript:|onclick=|onerror=|onload=/i;
+        return scriptPattern.test(text);
+    };
+
+    // Validation Logic
     const validate = (name, value) => {
         if (name === "name") return value.length >= 2;
         if (name === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        if (name === "message") return value.length >= 10;
+        if (name === "message") {
+            // Check length AND check for malicious scripts
+            if (containsScript(value)) return false;
+            return value.length >= 10;
+        }
         return false;
     };
 
@@ -102,7 +129,14 @@ export default function Contact() {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        // Final validation check
+        // 1. Security Check: Block if any field contains malicious script patterns
+        if (containsScript(formData.message) || containsScript(formData.name)) {
+            alert("Security Alert: Custom scripts are not allowed.");
+            setFormStatus("error");
+            return;
+        }
+
+        // 2. Standard Validation
         if (!isValid.name || !isValid.email || !isValid.message) {
             setTouched({ name: true, email: true, message: true });
             return;
@@ -111,29 +145,33 @@ export default function Contact() {
         setFormStatus("submitting");
 
         try {
-            const response = await fetch("/api/contact", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            });
+            // 3. Sanitize Data before sending to Firebase
+            const safeData = {
+                name: sanitize(formData.name),
+                email: sanitize(formData.email),
+                message: sanitize(formData.message),
+                timestamp: new Date().toISOString(), // Use ISO string for consistent sorting
+                read: false
+            };
 
-            if (response.ok) {
-                setFormStatus("success");
-                setFormData({ name: "", email: "", message: "" });
-                setTouched({ name: false, email: false, message: false });
-                // Reset after 5 seconds
-                setTimeout(() => setFormStatus("idle"), 5000);
-            } else {
-                setFormStatus("error");
-            }
+            // 4. Send to Firestore
+            await addDoc(collection(db, "portfolio_messages"), safeData);
+
+            setFormStatus("success");
+            setFormData({ name: "", email: "", message: "" });
+            setTouched({ name: false, email: false, message: false });
+            // Reset after 5 seconds
+            setTimeout(() => setFormStatus("idle"), 5000);
+
         } catch (err) {
+            console.error("Transmission Error:", err);
             setFormStatus("error");
         }
     }
 
     return (
         <section id="contact" className="py-24 px-6 md:px-12 max-w-7xl mx-auto mb-20 relative">
-            {/* NEW: Grid Background Pattern */}
+            {/* Grid Background Pattern */}
             <div className="absolute inset-x-0 top-0 h-[500px] pointer-events-none opacity-[0.03]"
                 style={{
                     backgroundImage: 'radial-gradient(circle, var(--foreground) 1px, transparent 1px)',
@@ -148,14 +186,14 @@ export default function Contact() {
                 viewport={{ once: true }}
                 className="glass-heavy p-8 md:p-12 rounded-3xl max-w-3xl mx-auto text-center border-t border-white/10 pointer-events-auto relative overflow-hidden"
             >
-                {/* NEW: Availability Status Badge */}
+                {/* Availability Status Badge */}
                 <div className="absolute top-6 right-6 flex items-center gap-2 px-3 py-1 rounded-full glass-heavy border border-white/10 text-[10px] font-mono uppercase tracking-wider">
                     <motion.span
                         animate={{ opacity: [1, 0.4, 1] }}
                         transition={{ duration: 2, repeat: Infinity }}
                         className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"
                     />
-                    Available for Projects
+                    Available for Help!
                 </div>
 
                 <h2 className="text-[var(--color-glow)] font-mono mb-2 text-sm uppercase tracking-widest">Transmission</h2>
@@ -183,7 +221,7 @@ export default function Contact() {
                             onSubmit={handleSubmit}
                             className="space-y-6 text-left max-w-md mx-auto relative z-10"
                         >
-                            {/* NEW: Input Group with Floating Label and Validation */}
+                            {/* Input Group with Floating Label and Validation */}
                             {[
                                 { id: "name", label: "Name", type: "text", placeholder: "Major Tom" },
                                 { id: "email", label: "Email", type: "email", placeholder: "tom@groundcontrol.com" }
@@ -199,6 +237,7 @@ export default function Contact() {
                                         {field.label}
                                     </label>
                                     <input
+                                        suppressHydrationWarning
                                         type={field.type}
                                         id={field.id}
                                         name={field.id}
@@ -230,6 +269,7 @@ export default function Contact() {
                                     Message
                                 </label>
                                 <textarea
+                                    suppressHydrationWarning
                                     id="message"
                                     name="message"
                                     rows={4}
@@ -244,7 +284,7 @@ export default function Contact() {
                                     style={{ backgroundColor: 'var(--glass-bg)', color: 'var(--foreground)' }}
                                     placeholder={formData.message ? "" : "Send your transmission..."}
                                 />
-                                {/* NEW: Character Counter */}
+                                {/* Character Counter */}
                                 <div className={`text-[10px] mt-1 text-right font-mono ${formData.message.length >= 500 ? "text-red-500" :
                                     formData.message.length >= 400 ? "text-yellow-500" : "opacity-40"
                                     }`}>
@@ -298,7 +338,7 @@ export default function Contact() {
                     )}
                 </AnimatePresence>
 
-                {/* NEW: Social Links Row */}
+                {/* Social Links Row */}
                 <motion.div
                     initial="hidden"
                     whileInView="visible"
@@ -314,4 +354,3 @@ export default function Contact() {
         </section>
     );
 }
-
