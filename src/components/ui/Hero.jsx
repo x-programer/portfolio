@@ -111,9 +111,9 @@ const HeroParticles = () => {
 };
 
 const phrases = [
-    "Shravana Kumar Patel.",
-    "a Full-Stack Developer.",
-    "an AI Engineer."
+    "CodeCraft Studio — Digital Growth Agency.",
+    "build fast, scalable websites.",
+    "grow businesses online with CodeCraft Studio."
 ];
 
 export default function Hero() {
@@ -203,7 +203,7 @@ export default function Hero() {
             </motion.div>
 
             <motion.h1
-                className="relative text-5xl md:text-8xl font-bold tracking-tight mb-6 pointer-events-auto w-full"
+                className="relative text-5xl md:text-8xl font-bold tracking-tight mb-12 pointer-events-auto w-full"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.1 }}
@@ -211,13 +211,13 @@ export default function Hero() {
             >
                 {/* Ghost Element to reserve vertical space (prevent layout shift) */}
                 <span className="invisible" aria-hidden="true">
-                    I am <br className="md:hidden" />
-                    a Full-Stack Developer.
+                    We <br className="md:hidden" />
+                    build fast, scalable websites.
                 </span>
 
                 {/* Actual Visible Typewriter Content */}
                 <span className="absolute top-0 left-0">
-                    I am <br className="md:hidden" />
+                    We <br className="md:hidden" />
                     <span>{text}</span>
                     <motion.span
                         animate={{ opacity: [1, 0] }}
@@ -234,7 +234,8 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
             >
-                Full-Stack AI Engineer building immersive digital experiences at the intersection of Art, Logic, and <span className="animated-gradient-text font-bold">Antigravity</span>.
+                A digital agency crafting SEO-optimized websites, high-performance web applications, and conversion-focused user experiences powered by <span className="animated-gradient-text font-bold">modern technology</span>.
+
             </motion.p>
 
             {/* NEW: Updated button container with staggered children */}

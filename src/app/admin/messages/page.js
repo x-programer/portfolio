@@ -86,7 +86,7 @@ export default function AdminMessagesPage() {
 
     // 3. Date Formatter Helper (Handles both Strings and Firestore Timestamps)
     const formatDate = (timestamp) => {
-        if (!timestamp) return "Unknown Date";
+        if (!timestamp) return "Unknown Date"
         // If it's a Firestore Timestamp (has .toDate)
         if (timestamp.toDate) return timestamp.toDate().toLocaleString();
         // If it's an ISO String (from Contact.jsx)
