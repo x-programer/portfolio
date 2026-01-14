@@ -279,7 +279,7 @@ export default function Navbar() {
 
                             <div className="pointer-events-auto">
                                 <button
-                                    onClick={() => window.location.href = 'mailto:ringtoneboy1530@gmail.com'}
+                                    onClick={() => window.location.href = 'mailto:my.codecraftstudio@gmail.com'}
                                     className="relative px-6 py-2.5 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] hover:bg-[var(--glass-border)] text-sm font-bold transition-all hover:scale-105 active:scale-95 group overflow-hidden"
                                     style={{ color: 'var(--foreground)' }}
                                 >
@@ -296,7 +296,7 @@ export default function Navbar() {
                         {/* Mobile - Let's Talk Button (Centered) */}
                         <div className="md:hidden absolute left-1/2 -translate-x-1/2 pointer-events-auto">
                             <button
-                                onClick={() => window.location.href = 'mailto:ringtoneboy1530@gmail.com'}
+                                onClick={() => window.location.href = 'mailto:my.codecraftstudio@gmail.com'}
                                 className="relative px-5 py-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] hover:bg-[var(--glass-border)] text-sm font-bold transition-all hover:scale-105 active:scale-95 group overflow-hidden"
                                 style={{ color: 'var(--foreground)' }}
                             >
