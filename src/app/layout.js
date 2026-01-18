@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Background3D from "@/components/3d/Background3D";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,12 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "CodeCraft Studio", // This is what shows on the tab
-  description: "Web Development & Digital Zen Portfolio", // Good for SEO
+  title: "CodeCraft Studio",
+  description: "Web Development & Digital Zen Portfolio",
+  // Google Search Console Verification
+  verification: {
+    google: "9ExvvzK5QTymSZnLl5h0DxvvXilat7hmPAePiX5wJxg",
+  },
 };
-
-import Background3D from "@/components/3d/Background3D";
-import SmoothScroll from "@/components/SmoothScroll";
 
 export default function RootLayout({ children }) {
   return (
