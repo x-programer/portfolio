@@ -348,7 +348,7 @@ export default function Contact() {
                     <SocialLink href="https://github.com" platform="GitHub" imgSrc="/github.png" delay={0.1} />
                     <SocialLink href="https://linkedin.com" platform="LinkedIn" imgSrc="/linkedin.png" delay={0.2} />
                     <SocialLink href="https://instagram.com" platform="Instagram" imgSrc="/instagram.png" delay={0.3} />
-                    <SocialLink href="mailto:ringtoneboy1530@gmail.com" platform="Email" imgSrc="/email.png" delay={0.4} />
+                    <SocialLink href="mailto:my.codecraftstudio@gmail.com" platform="Email" imgSrc="/email.png" delay={0.4} />
                 </motion.div>
             </motion.div>
         </section>
