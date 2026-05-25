@@ -346,8 +346,8 @@ export default function Contact() {
                     className="mt-12 pt-8 border-t border-white/5 flex justify-center gap-6"
                 >
                     <SocialLink href="https://github.com" platform="GitHub" imgSrc="/github.png" delay={0.1} />
-                    <SocialLink href="https://linkedin.com" platform="LinkedIn" imgSrc="/linkedin.png" delay={0.2} />
-                    <SocialLink href="https://instagram.com" platform="Instagram" imgSrc="/instagram.png" delay={0.3} />
+                    <SocialLink href="https://www.facebook.com/my.codecraftstudio" platform="Facebook" imgSrc="/facebook.png" delay={0.2} />
+                    <SocialLink href="https://www.instagram.com/my.codecraft.studio/" platform="Instagram" imgSrc="/instagram.png" delay={0.3} />
                     <SocialLink href="mailto:my.codecraftstudio@gmail.com" platform="Email" imgSrc="/email.png" delay={0.4} />
                 </motion.div>
             </motion.div>

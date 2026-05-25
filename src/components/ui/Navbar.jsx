@@ -134,6 +134,10 @@ export default function Navbar() {
         setTheme(savedTheme);
         if (savedTheme === "light") {
             document.documentElement.classList.add("light");
+            document.documentElement.classList.remove("dark");
+        } else {
+            document.documentElement.classList.add("dark");
+            document.documentElement.classList.remove("light");
         }
 
         const observerOptions = { threshold: 0.5, rootMargin: "-80px 0px 0px 0px" };
@@ -165,7 +169,9 @@ export default function Navbar() {
         localStorage.setItem("theme", newTheme);
         if (newTheme === "light") {
             document.documentElement.classList.add("light");
+            document.documentElement.classList.remove("dark");
         } else {
+            document.documentElement.classList.add("dark");
             document.documentElement.classList.remove("light");
         }
     };
@@ -196,10 +202,13 @@ export default function Navbar() {
         { name: "About", href: "#about" },
         { name: "Projects", href: "#projects" },
         { name: "Contact", href: "#contact" },
-        { name: "Services", href: "#services" },
+        { name: "Services", href: "/services" },
     ];
 
     const scrollToSection = (e, href) => {
+        if (!href.startsWith("#")) {
+            return;
+        }
         if (e) e.preventDefault();
         const element = document.querySelector(href);
         if (element) {
